@@ -5,6 +5,7 @@ function main() {
 	// specifying the keyboard handlers
 	this.input.addKeyHandler(myGetKeys);
 	this.input.addKeyHandler(myGetKeysForMenu);
+	this.input.addMouseHandler(getMouse);
 
 	// specifying the gamepad handler
 	this.input.addUpdateLoop(onTimerTick, 33);
