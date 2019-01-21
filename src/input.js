@@ -1,7 +1,7 @@
 /*
  * Peter Daly
  * Component to allow for easier processing of user input
- * Days worked on: 30/10/18 - 20/11/18
+ * Days worked on: 30/10/18 - 14/1/18
  *
  */
 
@@ -13,8 +13,16 @@ class Input {
     this.mouseDirection = null;
     this.gamepads = [];
     this.keyHandlers = [];
-    this.mouseHandlers = [];
     this.buttonsPressed = [];
+    this.connected = false;
+
+    this.loops = [];
+    this.holdValue = 0;
+    this.holdTimer = 0;
+
+    this.history = [];
+
+    this.binds = {};
 
     var that = this;
 
@@ -30,6 +38,7 @@ class Input {
   }
 
   addUpdateLoop(name, loop) {
+    this.loops.push(name);
     setInterval(name, loop);
   }
 
@@ -37,13 +46,14 @@ class Input {
     this.keyHandlers.push(name);
   }
 
-  addMouseHandler(name) {
-    this.mouseHandlers.push(name);
+  setHoldValue(val) {
+    this.holdValue = val;
   }
 
   update() {
     this.gamepads = navigator.getGamepads();
     if (!this.gamepads) {
+      this.connected = false;
       return;
     }
     var pad;
@@ -85,6 +95,7 @@ class Input {
     var gamepad = event.gamepad;
 
     if (connecting) {
+      that.connected = true;
       console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
       gamepad.index, gamepad.id,
       gamepad.buttons.length, gamepad.axes.length);
@@ -97,11 +108,27 @@ class Input {
   }
 
   keyDownHandler (that, e) {
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+
+    that.holdTimer++;
     if(!that.keys.includes(e.key)) {
       that.keys.push(e.key);
     }
+    console.log(e.key);
+    for(var key in that.binds) {
+      if(key === e.key) {
+        var func = that.binds[key];
+        func();
+      }
+    }
     that.keyHandlers.forEach(function(element) {
-      element(that.keys);
+      if(that.holdTimer > that.holdValue) {
+        that.holdTimer = 0;
+        that.history.push(that.keys.slice());
+        element(that.keys);
+      }
     });
   }
 
@@ -128,9 +155,12 @@ class Input {
     }
     that.x = e.clientX;
     that.y = e.clientY;
-    that.mouseHandlers.forEach(function(element) {
-      element(e, that.mouseDirection);
-    });
+    getMouse(e, that.mouseDirection);
+
+  }
+
+  bind(func, key) {
+    this.binds[key] = func;
   }
 
 }
