@@ -51,6 +51,17 @@ class Input {
   }
 
   update() {
+    var that = this;
+    for(var key in this.binds) {
+      that.keys.forEach(function(element) {
+        
+        if(key === element) {
+          var func = that.binds[key];
+          func();
+        }
+      });
+    }
+
     this.gamepads = navigator.getGamepads();
     if (!this.gamepads) {
       this.connected = false;
@@ -116,13 +127,7 @@ class Input {
     if(!that.keys.includes(e.key)) {
       that.keys.push(e.key);
     }
-    console.log(e.key);
-    for(var key in that.binds) {
-      if(key === e.key) {
-        var func = that.binds[key];
-        func();
-      }
-    }
+
     that.keyHandlers.forEach(function(element) {
       if(that.holdTimer > that.holdValue) {
         that.holdTimer = 0;

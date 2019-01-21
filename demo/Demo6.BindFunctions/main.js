@@ -59,6 +59,7 @@ function initCanvas() {
 
 
 function draw() {
+	this.input.update();
 	this.ctx.clearRect(0,0,1000,1000);
 	this.ctx.fillText("Demo 6: Please follow these instructions", 10, 50);
 	this.ctx.fillText("I've bound functions to the arrow keys", 10, 150);
