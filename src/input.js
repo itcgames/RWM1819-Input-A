@@ -13,6 +13,7 @@ class Input {
     this.mouseDirection = null;
     this.gamepads = [];
     this.keyHandlers = [];
+    this.mouseHandlers = [];
     this.buttonsPressed = [];
     this.connected = false;
 
@@ -44,6 +45,10 @@ class Input {
 
   addKeyHandler(name) {
     this.keyHandlers.push(name);
+  }
+
+  addMouseHandler(name) {
+    this.mouseHandlers.push(name);
   }
 
   setHoldValue(val) {
@@ -160,7 +165,11 @@ class Input {
     }
     that.x = e.clientX;
     that.y = e.clientY;
-    getMouse(e, that.mouseDirection);
+
+
+    that.mouseHandlers.forEach(function(element) {
+      element(that.keys);
+    });
 
   }
 

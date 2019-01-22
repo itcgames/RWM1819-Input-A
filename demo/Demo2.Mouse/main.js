@@ -7,6 +7,8 @@ function main() {
 	// specifying the keyboard handlers
 	this.input.addUpdateLoop(draw, 33);
 
+	this.input.addMouseHandler(getMouse);
+
 	this.initCanvas();
 	this.img = new Image();
 	this.img.src = "../assets/ring.png";
